@@ -1,4 +1,4 @@
-import utils
+from utils import get_list_from_file, write_todos, print_todos, process_index_input, remove_item
 
 user_prompt = "Type add, show, edit, complete, clear or exit: "
 
@@ -11,31 +11,31 @@ while True:
         if len(to_do) == 0:
             to_do = input("Enter task: ").strip()
 
-        toDos = utils.get_list_from_file()
-        toDos.append(to_do + "\n")
+        to_dos = get_list_from_file()
+        to_dos.append(to_do + "\n")
 
-        utils.write_todos(toDos)
+        write_todos(to_dos)
 
         print(f"You have added {to_do.upper()} to your list.")
 
     elif user_action.startswith("show"):
-        toDos = utils.get_list_from_file()
+        to_dos = get_list_from_file()
 
-        if len(toDos) == 0:
+        if len(to_dos) == 0:
             print("List is empty")
             continue
 
-        utils.print_todos()
-        print(f"You have {len(toDos)} todos.")
+        print_todos()
+        print(f"You have {len(to_dos)} todos.")
 
     elif user_action.startswith("edit"):
-        toDos = utils.get_list_from_file()
+        to_dos = get_list_from_file()
 
-        if len(toDos) == 0:
+        if len(to_dos) == 0:
             print("List is empty")
             continue
 
-        utils.print_todos()
+        print_todos()
         has_updated = False
 
         while not has_updated:
@@ -56,52 +56,52 @@ while True:
                 task_index -= 1
             except ValueError:
                 print(
-                    f"Please enter a valid number between 1 and {len(toDos)}."
+                    f"Please enter a valid number between 1 and {len(to_dos)}."
                 )
                 has_updated = True
                 continue
 
-            if task_index < 0 or task_index >= len(toDos):
+            if task_index < 0 or task_index >= len(to_dos):
                 print(
-                    f"Please enter a number between 1 and {len(toDos)}."
+                    f"Please enter a number between 1 and {len(to_dos)}."
                 )
                 continue
 
-            toDos[task_index] = input("Enter new task: ") + "\n"
+            to_dos[task_index] = input("Enter new task: ") + "\n"
 
 
-            utils.write_todos(toDos)
-            utils.print_todos()
+            write_todos(to_dos)
+            print_todos()
 
             has_updated = True
 
     elif user_action.startswith("complete"):
         if len(user_action[8:].strip()) == 0:
-            temp_index = utils.process_index_input()
+            temp_index = process_index_input()
         else:
             try:
                 temp_index = int(user_action[8:].strip()) - 1
             except ValueError:
-                temp_index = utils.process_index_input()
+                temp_index = process_index_input()
 
-        toDos = utils.get_list_from_file()
+        to_dos = get_list_from_file()
 
-        if temp_index < 0 or temp_index >= len(toDos):
-            utils.print_todos()
+        if temp_index < 0 or temp_index >= len(to_dos):
+            print_todos()
             print(
-                f"Please enter a valid number between 0 and {len(toDos)}."
+                f"Please enter a valid number between 0 and {len(to_dos)}."
             )
             continue
 
-        completed_task = toDos[temp_index]
-        utils.remove_item(toDos, temp_index)
+        completed_task = to_dos[temp_index]
+        remove_item(to_dos, temp_index)
 
-        utils.write_todos(toDos)
+        write_todos(to_dos)
 
     elif user_action.startswith("clear"):
-        toDos = utils.get_list_from_file()
-        toDos.clear()
-        utils.write_todos(toDos)
+        to_dos = get_list_from_file()
+        to_dos.clear()
+        write_todos(to_dos)
 
     elif user_action.startswith("exit"):
         break
