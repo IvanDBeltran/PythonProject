@@ -1,112 +1,68 @@
-from utils import get_list_from_file, write_todos, print_todos, process_index_input, remove_item
+# from functions import get_todos, write_todos
+import functions
+import time
 
-user_prompt = "Type add, show, edit, complete, clear or exit: "
+now = time.strftime("%b %d, %Y %H:%M:%S")
+print("It is", now)
 
 while True:
-    user_action = input(user_prompt)
-    user_action = user_action.strip().lower()
+    user_action = input("Type add, show, edit, complete or exit: ")
+    user_action = user_action.strip()
 
     if user_action.startswith("add"):
-        to_do = user_action[4:]
-        if len(to_do) == 0:
-            to_do = input("Enter task: ").strip()
+        todo = user_action[4:]
 
-        to_dos = get_list_from_file()
-        to_dos.append(to_do + "\n")
+        todos = functions.get_todos()
 
-        write_todos(to_dos)
+        todos.append(todo + '\n')
 
-        print(f"You have added {to_do.upper()} to your list.")
+        functions.write_todos(todos)
 
-    elif user_action.startswith("show"):
-        to_dos = get_list_from_file()
+    elif user_action.startswith('show'):
 
-        if len(to_dos) == 0:
-            print("List is empty")
+        todos = functions.get_todos()
+
+        for index, item in enumerate(todos):
+            item = item.strip('\n')
+            row = f"{index + 1}-{item}"
+            print(row)
+    elif user_action.startswith('edit'):
+        try:
+            number = int(user_action[5:])
+            print(number)
+
+            number = number - 1
+
+            todos = functions.get_todos()
+
+            new_todo = input("Enter new todo: ")
+            todos[number] = new_todo + '\n'
+
+            functions.write_todos(todos)
+        except ValueError:
+            print("Your command is not valid.")
             continue
 
-        print_todos()
-        print(f"You have {len(to_dos)} todos.")
+    elif user_action.startswith('complete'):
+        try:
+            number = int(user_action[9:])
 
-    elif user_action.startswith("edit"):
-        to_dos = get_list_from_file()
+            todos = functions.get_todos()
+            index = number - 1
+            todo_to_remove = todos[index].strip('\n')
+            todos.pop(index)
 
-        if len(to_dos) == 0:
-            print("List is empty")
+            functions.write_todos(todos)
+
+            message = f"Todo {todo_to_remove} was removed from the list."
+            print(message)
+        except IndexError:
+            print("There is no item with that number.")
             continue
 
-        print_todos()
-        has_updated = False
-
-        while not has_updated:
-            if len(user_action[4:].strip()) == 0:
-                raw = input(
-                    "Enter task to update or press enter to cancel: "
-                ).strip()
-            else:
-                raw = user_action[4:].strip()
-
-            task_index = 0
-            if raw == "":
-                print("Edit cancelled.")
-                break
-
-            try:
-                task_index = int(raw)
-                task_index -= 1
-            except ValueError:
-                print(
-                    f"Please enter a valid number between 1 and {len(to_dos)}."
-                )
-                has_updated = True
-                continue
-
-            if task_index < 0 or task_index >= len(to_dos):
-                print(
-                    f"Please enter a number between 1 and {len(to_dos)}."
-                )
-                continue
-
-            to_dos[task_index] = input("Enter new task: ") + "\n"
-
-
-            write_todos(to_dos)
-            print_todos()
-
-            has_updated = True
-
-    elif user_action.startswith("complete"):
-        if len(user_action[8:].strip()) == 0:
-            temp_index = process_index_input()
-        else:
-            try:
-                temp_index = int(user_action[8:].strip()) - 1
-            except ValueError:
-                temp_index = process_index_input()
-
-        to_dos = get_list_from_file()
-
-        if temp_index < 0 or temp_index >= len(to_dos):
-            print_todos()
-            print(
-                f"Please enter a valid number between 0 and {len(to_dos)}."
-            )
-            continue
-
-        completed_task = to_dos[temp_index]
-        remove_item(to_dos, temp_index)
-
-        write_todos(to_dos)
-
-    elif user_action.startswith("clear"):
-        to_dos = get_list_from_file()
-        to_dos.clear()
-        write_todos(to_dos)
-
-    elif user_action.startswith("exit"):
+    elif user_action.startswith('exit'):
         break
-
     else:
-        print("Please enter a valid command.")
+        print("Command is not valid.")
 
-print("Bye bye")
+print("Bye!")

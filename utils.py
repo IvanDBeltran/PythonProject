@@ -56,4 +56,5 @@ def remove_item(todos: list[str], index: int) -> None:
     print(f"{removed} was marked as completed and removed")
 
 
-
+if __name__ == "__main__":
+    print(print_todos())
