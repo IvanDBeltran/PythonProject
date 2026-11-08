@@ -28,19 +28,24 @@ while True:
     event, values = window.read()
     print(event)
     print(values)
-    print(f"meh {values["todos"]}")
+    #print(f"meh {values["todos"]}")
     match event:
         case "Add":
             todos = functions.get_todos()
             new_todo = values["todo"] + "\n"
             todos.append(new_todo)
             functions.write_todos(todos)
+            window["todos"].Update(values=todos)
         case "Edit":
             todo_to_edit = values["todos"][0]
+            new_todo = values["todo"] + "\n"
             todos = functions.get_todos()
             index = todos.index(todo_to_edit)
-            todos[index] = values["todo"] + "\n"
+            todos[index] = new_todo
             functions.write_todos(todos)
+            window["todos"].Update(values=todos)
+        case "todos":
+            window["todo"].Update(value=values['todos'][0])
         case sg.WIN_CLOSED:
             break
 
